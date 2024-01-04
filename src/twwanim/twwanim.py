@@ -1,0 +1,73 @@
+import os
+import argparse
+import json
+from contextlib import redirect_stdout
+from typing import Hashable, Sequence, Tuple
+
+import networkx as nx
+
+with redirect_stdout(open(os.devnull, 'w')):
+    # workaround: https://github.com/ManimCommunity/manim/issues/3326
+    from manim import tempconfig
+
+from manim import config as globalconfig
+from manim._config.utils import _determine_quality
+
+from twwanim.TwinwidthAnimation import TwinwidthAnimation
+from twwanim.readwrite import *
+
+
+def get_parser():
+    """Argument parser."""
+
+    version = __import__('twwanim').__version__
+
+    parser = argparse.ArgumentParser(description='Twinwidth animation tools.')
+    parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {version}')
+    parser.add_argument('-p', '--preview', action='store_true', help="preview the Scene's animation")
+    parser.add_argument('-q', '--quality', default='h', choices=['l', 'm', 'h', 'p', 'k'], help=''.join([
+        'Render quality at the follow resolution framerates, respectively: ',
+        '854x480 15FPS, 1280x720 30FPS, 1920x1080 60FPS, 2560x1440 60FPS, 3840x2160 60FPS'
+    ]))
+    parser.add_argument('graph_path', metavar='GRAPH_PATH', help='path to the input graph file')
+    parser.add_argument('cs_path', metavar='CS_PATH', help='path to the input contraction sequence file')
+
+    return parser
+
+
+def load_graph(path: str) -> nx.Graph:
+    if path.endswith('.json'):
+        with open(path) as f:
+            return nx.node_link_graph(json.load(f))
+    elif path.endswith('.gr'):
+        return load_pace_2023(path, zero_indexed=False)
+    else:
+        NotImplementedError('unsupported graph file')
+
+
+def load_cs(path: str) -> Sequence[Tuple[Hashable, Hashable]]:
+    if path.endswith('.json'):
+        with open(path) as f:
+            return json.load(f)
+    else:
+        return load_contraction_file(path, zero_indexed=False)
+
+
+def main(args):
+    # load input files
+    g = load_graph(args.graph_path)
+    cs = load_cs(args.cs_path)
+
+    # call manim's render()
+    config = globalconfig.copy()
+    config.quality = _determine_quality(args.quality)
+
+    with tempconfig(config):
+        scene = TwinwidthAnimation()
+        scene.set_graph(g)
+        scene.set_contraction_sequence(cs)
+        scene.render(args.preview)
+
+
+def run_main():
+    main(get_parser().parse_args())

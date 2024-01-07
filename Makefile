@@ -1,4 +1,4 @@
-PYTHON = python
+PYTHON = python3
 PROGRAM = twwanim
 SRC_PY = src
 TEST_PY = tests
@@ -30,10 +30,16 @@ console:
 lab:
 	cd notebooks && jupyter-lab
 
-register:
-	$(PYTHON) setup.py register
+# For PyPI publication (requires `twine` and `build`; configure `~/.pypirc`)
+build:
+	rm -rf dist
+	$(PYTHON) -m build
 
-publish:
-	$(PYTHON) setup.py sdist upload
+publish-test: build
+	$(PYTHON) -m twine upload --repository testpypi dist/*
 
-.PHONY: install uninstall dev_install test coverage clean console register publish
+publish: build
+	$(PYTHON) -m twine upload dist/*
+
+
+.PHONY: install uninstall dev_install test coverage clean console build publish-test publish

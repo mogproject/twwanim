@@ -27,8 +27,7 @@ setup(
     packages=find_packages(SRC_DIR),
     include_package_data=True,
     test_suite='tests',
-    entry_points="""
-    [console_scripts]
-    twwanim = twwanim.twwanim:run_main
-    """
+    entry_points={
+        'console_scripts': ['twwanim = twwanim.twwanim:run_main']
+    }
 )

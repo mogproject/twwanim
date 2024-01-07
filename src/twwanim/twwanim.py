@@ -29,6 +29,7 @@ def get_parser():
         'Render quality at the follow resolution framerates, respectively: ',
         '854x480 15FPS, 1280x720 30FPS, 1920x1080 60FPS, 2560x1440 60FPS, 3840x2160 60FPS'
     ]))
+    parser.add_argument('-s', '--speed', type=float, default=1.0, help='playback speed (default: 1.0)')
     parser.add_argument('graph_path', metavar='GRAPH_PATH', help='path to the input graph file')
     parser.add_argument('cs_path', metavar='CS_PATH', help='path to the input contraction sequence file')
 
@@ -58,6 +59,11 @@ def main(args):
     g = load_graph(args.graph_path)
     cs = load_cs(args.cs_path)
 
+    # test if `pos` is set for all nodes
+    if len(nx.get_node_attributes(g, 'pos')) != len(g):
+        print(f'Using default graph layout: n={len(g)}, m={g.number_of_edges()}')
+        nx.set_node_attributes(g, nx.spring_layout(g), 'pos')
+
     # call manim's render()
     config = globalconfig.copy()
     config.quality = _determine_quality(args.quality)
@@ -66,6 +72,7 @@ def main(args):
         scene = TwinwidthAnimation()
         scene.set_graph(g)
         scene.set_contraction_sequence(cs)
+        scene.set_speed(args.speed)
         scene.render(args.preview)
 
 

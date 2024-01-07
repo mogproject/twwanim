@@ -61,7 +61,14 @@ class TriGraph:
             AnimationGroup(*(Create(self.edges[e]) for e in self.edges), run_time=0.7)
         )
 
-    def contract(self, scene: Scene, u: Hashable, v: Hashable, extra_animations: Sequence[AnimationGroup]):
+    def contract(
+        self,
+        scene: Scene,
+        u: Hashable,
+        v: Hashable,
+        extra_animations: Sequence[AnimationGroup],
+        animation_speed: float,
+    ):
         # -----------------------------------------------------------------------
         # Update inner data structure.
         # -----------------------------------------------------------------------
@@ -78,7 +85,7 @@ class TriGraph:
             self.G[u].animate.set_stroke_color(YELLOW),
             self.G[v].animate.set_stroke_color(YELLOW),
             *extra_animations,
-            run_time=0.6
+            run_time=0.6 * animation_speed
         )
 
         # -----------------------------------------------------------------------
@@ -99,7 +106,7 @@ class TriGraph:
                   .set_stroke_color(RED_E)
                   .set_stroke_width(self.edge_width_bold)
                   .set_opacity(self.edge_opacity_red) for e in act.highlight_to_red),
-                run_time=0.5
+                run_time=0.5 * animation_speed
             )
         if act.highlight_white_to_green or act.highlight_red_to_green:
             scene.play(
@@ -111,7 +118,7 @@ class TriGraph:
                   .set_stroke_color(RED_E)
                   .set_stroke_width(self.edge_width_normal)
                   .set_opacity(self.edge_opacity_red) for e in act.highlight_red_to_green),
-                run_time=0.5
+                run_time=0.5 * animation_speed
             )
 
         # -----------------------------------------------------------------------
@@ -127,7 +134,7 @@ class TriGraph:
                 self.G[u].get_center() * 0.999 + self.G[v].get_center() * 0.001 if z == 1 else self.G[u].get_center(),
                 self.G[u].get_center() * 0.999 + self.G[v].get_center() * 0.001 if z == 0 else self.G[u].get_center()
             ) for x, y, z in act.edge_shrink),
-            run_time=0.8
+            run_time=0.8 * animation_speed
         )
         self.G.remove_vertices(v)  # should be already transparent
 
@@ -140,7 +147,7 @@ class TriGraph:
             *(FadeOut(self.edges[e]) for e in act.edge_fadeout),
             self.G[u].animate.set_stroke_color(self.vertex_config['stroke_color']),
             *(self.edges[e].animate.set_stroke_width(self.edge_width_normal) for e in act.highlight_to_red),
-            run_time=0.4
+            run_time=0.4 * animation_speed
         )
 
         # -----------------------------------------------------------------------

@@ -38,6 +38,11 @@ class TwinwidthAnimation(Scene):
     def set_contraction_sequence(self, cs: Sequence[Tuple[Hashable, Hashable]]) -> None:
         self.cs = cs
 
+    def set_speed(self, speed: float) -> None:
+        if speed <= 0:
+            raise ValueError(f'speed must be a positive number: given {speed}')
+        self.speed = 1.0 / speed  # store reciprocal
+
     def _find_scale(self, layout: dict[Hashable, Sequence[float]]):
         dim = [len(v) for v in layout.values()]
 
@@ -113,7 +118,7 @@ class TwinwidthAnimation(Scene):
             row_contraction = Tex(f'${u} \gets {v}$', font_size=table_font_size).move_to([4.2, row_y, 0.0], aligned_edge=ORIGIN)
 
             # Do contraction
-            G.contract(self, u, v, [Write(row_time), Write(row_contraction)])
+            G.contract(self, u, v, [Write(row_time), Write(row_contraction)], self.speed)
 
             # Update red degrees
             reddeg = G.max_red_degree()
@@ -130,8 +135,9 @@ class TwinwidthAnimation(Scene):
 
                 self.play(
                     Write(row_reddeg),
-                    ReplacementTransform(tww_count, tww_count_new)
+                    ReplacementTransform(tww_count, tww_count_new),
+                    run_time=1.0 * self.speed
                 )
                 tww_count = tww_count_new
             else:
-                self.play(Write(row_reddeg))
+                self.play(Write(row_reddeg), run_time=1.0 * self.speed)

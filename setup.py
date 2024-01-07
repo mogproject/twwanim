@@ -16,7 +16,7 @@ setup(
     author='Yosuke Mizutani',
     author_email='mogproj@gmail.com',
     license='Apache 2.0 License',
-    url='https://github.com/mogproject/twinwidth-animation',
+    url='https://github.com/mogproject/twwanim',
     install_requires=[
         'networkx >= 3.1',
         'manim >= 0.18.0',

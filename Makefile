@@ -1,5 +1,5 @@
 PYTHON = python
-PROGRAM = twinwidth-animation
+PROGRAM = twwanim
 SRC_PY = src
 TEST_PY = tests
 COV_PY=coverage/lcov.info

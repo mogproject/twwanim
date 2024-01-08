@@ -55,7 +55,7 @@ $ twwanim --help
 **Example:**
 
 ```
-twwanim -p -ql tests/resources/pace2023/public/exact_001.json tests/resources/pace2023/public/exact_001_cs.txt
+twwanim -p -ql tests/resources/pace2023/tiny/tiny001.json tests/resources/pace2023/tiny/tiny001_cs.txt
 ```
 
 - `-p`: Preview the video after rendering it.

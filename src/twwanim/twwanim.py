@@ -30,6 +30,9 @@ def get_parser():
         '854x480 15FPS, 1280x720 30FPS, 1920x1080 60FPS, 2560x1440 60FPS, 3840x2160 60FPS'
     ]))
     parser.add_argument('-s', '--speed', type=float, default=1.0, help='playback speed (default: 1.0)')
+    parser.add_argument('--format', default='mp4', choices=['png', 'gif', 'mp4', 'webm', 'mov'], help='output format (default: mp4)')
+    parser.add_argument('-r', '--resolution', metavar='W,H', help='resolution in "W,H"')
+    parser.add_argument('--fps', '--frame_rate', metavar='FLOAT', type=float, help='render at this frame rate')
     parser.add_argument('graph_path', metavar='GRAPH_PATH', help='path to the input graph file')
     parser.add_argument('cs_path', metavar='CS_PATH', help='path to the input contraction sequence file')
 
@@ -66,14 +69,29 @@ def main(args):
 
     # call manim's render()
     config = globalconfig.copy()
-    config.quality = _determine_quality(args.quality)
+    try:
+        config.quality = _determine_quality(args.quality)
+        config.format = args.format
+        if args.resolution is not None:
+            w, h = map(int, args.resolution.split(','))
+            config.pixel_width = w
+            config.pixel_height = h
+        if args.fps is not None:
+            config.frame_rate = args.fps
+    except Exception as e:
+        raise f'Commandline format error: {e}'
 
+    # render the scene
     with tempconfig(config):
         scene = TwinwidthAnimation()
         scene.set_graph(g)
         scene.set_contraction_sequence(cs)
         scene.set_speed(args.speed)
-        scene.render(args.preview)
+
+        try:
+            scene.render(args.preview)
+        except Exception:
+            return 1  # error while rendering
 
 
 def run_main():

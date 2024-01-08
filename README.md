@@ -1,10 +1,10 @@
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://choosealicense.com/licenses/apache-2.0/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://choosealicense.com/licenses/apache-2.0/) [![PyPI version](https://badge.fury.io/py/twwanim.svg)](http://badge.fury.io/py/twwanim)
 
 # twwanim
 
 **Tw**in-**w**idth **anim**ation tools. Given an (undirected, simple) graph and a corresponding contraction sequence (see [Wikipedia](https://en.wikipedia.org/wiki/Twin-width) for the definition of twin-width), `twwanim` creates a video visualizing contractions and red edges.
 
-![Example](https://github.com/mogproject/twwanim/assets/2019701/9526d7ad-b302-463d-938c-dd079aae6d66)
+![Example](https://github.com/mogproject/twwanim/assets/2019701/c4733c67-e976-4322-9558-4995cbf689b1)
 
 ## Dependencies
 
